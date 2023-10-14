@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+    <title>CosyWithJodie BINGO!</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="resources/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="resources/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="resources/images/favicon-16x16.png">
+    <link rel="manifest" href="resources/images/site.webmanifest">
+    <link rel="mask-icon" href="resources/images/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="resources/images/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="resources/images/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
+    <link id="original-stylesheet" rel="stylesheet" type="text/css" href="./resources/css/style-rev3.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
+    <script src ="./resources/js/script-rev4.js"></script>
+    <script src="./resources/js/welcomeMessage.js"></script>
+    <script src="./resources/js/screenshotTool.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+      button {
+        background-color: #c13d0500;
+        color: #ffffff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+
+      button:hover {
+        background-color: #ffffff00;
+      }
+
+      .sheet-link {
+        display: inline-block;
+        /*padding: 8px 16px;*/
+        background-color: #c13d0500;
+        color: #ffffff;
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+
+      .logo-refresh-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px; /* Add some space between the logo and the rest of the content */
+      }
+
+      .title img {
+        max-width: 25%;
+        padding-left: 26px;
+      }
+
+      /* Style for the refresh icon */
+      .refresh-icon {
+        margin-right: 12px;
+        font-size: 20px;
+      }
+
+      /* Apply spinning animation to the icon on hover */
+      .refreshButton:hover .refresh-icon {
+        animation: spin 1s infinite linear;
+      }
+
+      /* Keyframes animation for spinning */
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .item.clicked {
+        background-color: #ffffff00;
+        color: #fff;
+      }
+
+      /* Original Theme Styles */
+      .original-theme .sheet-link {
+        background-color: #c13d0500;
+      }
+
+      /* Bread Theme Styles */
+      .bread-theme .sheet-link {
+        background-color: #ff8c5a00;
+      }
+    </style>
+  </head>
+  <body class="original-theme">
+    <div id="back-img"></div>
+    <div id="bodyWrapper">
+      <div id="game">
+        <div class="logo-refresh-container">
+          <div class="title">
+            <img src="resources/images/logo.png" width="25%" alt="CosyWithJodie Bingo!">
+          </div>
+          <button id="refreshButton" class="refreshButton">
+            <a class="sheet-link"><i class="fas fa-sync-alt refresh-icon"></i></a>
+          </button>
+        </div>
+        <div id="board">
+        </div>
+        <p class="community">Join The <a href="https://discord.gg/tV49tWtgXS" target="_blank" title="CosyWithJodie discord">Community</a></p>
+        <button onclick="capture()"><i class="fad fa-camera fa-solid fa-sm"></i> Capture and Download Screenshot</button>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container footer-container">
+        <div class="footer-copyright">
+          Based on <a href="https://github.com/brocksexton/WanShowBingo/" target="_blank" title="Original developer">Wanshow.bingo.</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
