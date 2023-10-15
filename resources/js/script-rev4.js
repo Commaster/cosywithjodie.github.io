@@ -5,16 +5,16 @@ $(function() {
 
   //Populate
   const entries = [
-    "Sharing is caring",
+    "*Sharing is caring*",
     "Great 'view'",
-    "Power cut",
+    "Stream dies",
     "Food-food party",
     "*UwU*",
     "Rude palian",
     "Burnt food",
     "Triple in a hole",
     "A shiny gets away",
-    "JODIE EAT!",
+    "*JODIE EAT!*",
     "Cake party",
     "Inventory full!",
     "Tool downgraded",
@@ -55,6 +55,9 @@ $(function() {
 
   const staticClickSounds = [];
   staticClickSounds.push(...clickSounds);
+
+  let wonLine = false;
+  let wonFullHouse = false;
 
   // Retrieve cached bingo card or generate a new one
   let spaces = JSON.parse(localStorage.getItem(CACHE_KEY));
@@ -114,6 +117,8 @@ $(function() {
   $("#refreshButton").click(function() {
     localStorage.removeItem("clickedTiles");
     clickedTiles = []; // Clear clickedTiles array
+    wonLine = false;
+    wonFullHouse = false;
     spaces = generateRandomBingoCard();
     localStorage.setItem(CACHE_KEY, JSON.stringify(spaces));
 
@@ -127,7 +132,7 @@ $(function() {
       }
     });
 
-    loser();
+    //loser();
   });
 
   $(".item").click(function() {
@@ -155,14 +160,28 @@ $(function() {
               }
           });
           if (count === numbers.length) {
-            debugger;
-              return true;
+            return true;
           }
           return false;
       }
 
+      function checkAllTiles() {
+        if ($("#board").children(".clicked").length === check.length) {
+          return true;
+        }
+        return false;
+      }
+
+      if (wonFullHouse) {
+      }
+      else if (checkAllTiles()) {
+        bigWinner();
+      }
+
+      if (wonLine) {
+      }
       //ROWS
-      if (checkTiles([0, 1, 2, 3, 4])) {
+      else if (checkTiles([0, 1, 2, 3, 4])) {
           winner();
       } else if (checkTiles([5, 6, 7, 8, 9])) {
           winner();
@@ -191,20 +210,31 @@ $(function() {
       } else if (checkTiles([4, 8, 12, 16, 20])) {
           winner();
       } else {
-          loser();
+          //loser();
       }
   });
 
-  function loser() {
-    $("#winner").addClass("hidden");
-  }
+  // function loser() {
+  //   $("#winner").addClass("hidden");
+  // }
 
   function winner() {
+    wonLine = true;
     Swal.fire({
       icon: 'success',
       title: 'Congratulations!',
-      text: 'You Win!',
+      text: '5 in a row!',
       confirmButtonText: 'OK'
+    });
+  }
+
+  function bigWinner() {
+    wonFullHouse = true;
+    Swal.fire({
+      icon: 'success',
+      title: 'Congratulations!',
+      text: 'Full House!',
+      confirmButtonText: 'YAY'
     });
   }
 
