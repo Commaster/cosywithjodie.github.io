@@ -1,47 +1,51 @@
 $(function() {
 
-  //define cache key
-  const CACHE_KEY = 'bingo-card'; // Define the cache key
+  //define storage keys
+  const CARD_KEY = 'bingo-card';
+  const TILES_KEY = 'clickedTiles';
+  const DATE_KEY = 'bingo-date';
+
+  const today = luxon.DateTime.utc().toISODate();
 
   //Populate
   const entries = [
-    "*Sharing is caring*",
+    "Cami says 'Sharing is caring', with feeling",
     "Great 'view'",
-    "Stream dies",
+    "Stream dies WITHOUT BRIBES",
     "Food-food party",
-    "*UwU*",
+    "Any of the ladies say 'UwU'",
     "Rude palian",
     "Burnt food",
     "Triple in a hole",
-    "A shiny gets away",
-    "*JODIE EAT!*",
+    "Jodie looses a shiny",
+    "Chat says 'JODIE EAT' when applicable",
     "Cake party",
-    "Inventory full!",
-    "Tool downgraded",
-    "Game breaks",
+    "Jodie complains about full inventory",
+    "Jodie's tool downgrades",
+    "Game breaks for Jodie",
     "Visual glitch",
-    "*MOIST*",
+    "Cami says 'MOIST', with feeling",
     "New follower",
     "Get raided",
     "New sub",
-    "Catch something new",
-    "'Restoring stamina'",
-    "Wrong tool",
+    "Jodie catches something new",
+    "*Restoring stamina*",
+    "Jodie swings the wrong tool",
     "Get bits",
     "Filling 'holes'",
     "5 gifted subs",
     "Fall damage off a cliff",
-    "Air break",
-    "*I like a big one!*",
+    "Cami announces an air break",
+    "Jodie says 'I like a big one'",
     "Crowned victory royale",
-    "*Core's inside me!*",
+    "Jodie says 'Core is inside me'",
     "Bush innuendo",
     "Apple core innuendo",
-    "*GET REKT*",
-    "*Feck uff*",
+    "Jodie says 'GET REKT'",
+    "Jodie says 'Feck uff'",
     "Jodie drowns",
     "Mods get bullied",
-    "*___, HONESTLY!*"
+    "Sammi says '___, HONESTLY'"
   ];
 
   const clickSounds = [
@@ -59,15 +63,29 @@ $(function() {
   let wonLine = false;
   let wonFullHouse = false;
 
+  let lastDate = JSON.parse(localStorage.getItem(DATE_KEY));
+  if (!lastDate) {
+    console.log('Date value not found');
+    localStorage.clear();
+  }
+  else if (lastDate !== today) {
+    console.log('Saved state too old');
+    localStorage.clear();
+  }
+  else {
+    console.log('Resuming saved state');
+    $('#refreshButton').hide();
+  }
+
   // Retrieve cached bingo card or generate a new one
-  let spaces = JSON.parse(localStorage.getItem(CACHE_KEY));
+  let spaces = JSON.parse(localStorage.getItem(CARD_KEY));
   let clickedTiles = []; // Define clickedTiles array
   if (!spaces) {
     spaces = generateRandomBingoCard();
-    localStorage.setItem(CACHE_KEY, JSON.stringify(spaces));
+    localStorage.setItem(CARD_KEY, JSON.stringify(spaces));
   } else {
     // Restore clicked tiles from localStorage
-    clickedTiles = JSON.parse(localStorage.getItem("clickedTiles")) || [];
+    clickedTiles = JSON.parse(localStorage.getItem(TILES_KEY)) || [];
     clickedTiles.forEach(index => {
     });
   }
@@ -93,7 +111,7 @@ $(function() {
       if (i === 12) {
         card[i] = "***Free***";
       } else {
-        if (entries.length == 0) {
+        if (entries.length === 0) {
             entries.push(...staticEntries);
           }
         const choice = Math.floor(Math.random() * entries.length);
@@ -105,7 +123,7 @@ $(function() {
   }
 
   function playRandomClick() {
-    if (clickSounds.length == 0) {
+    if (clickSounds.length === 0) {
       clickSounds.push(...staticClickSounds);
     }
     const choice = Math.floor(Math.random() * clickSounds.length);
@@ -114,18 +132,18 @@ $(function() {
   }
 
   // Refresh button functionality
-  $("#refreshButton").click(function() {
-    localStorage.removeItem("clickedTiles");
+  $("#refreshButton").on("click", function() {
+    localStorage.removeItem(TILES_KEY);
     clickedTiles = []; // Clear clickedTiles array
     wonLine = false;
     wonFullHouse = false;
     spaces = generateRandomBingoCard();
-    localStorage.setItem(CACHE_KEY, JSON.stringify(spaces));
+    localStorage.setItem(CARD_KEY, JSON.stringify(spaces));
 
     // Update the displayed bingo card
     const boardTiles = $(".item");
     boardTiles.each(function(index) {
-      if(index != 12) {
+      if(index !== 12) {
         const tileText = $(this).find('p');
         tileText.text(spaces[index]);
         $(this).removeClass('clicked');
@@ -135,83 +153,80 @@ $(function() {
     //loser();
   });
 
-  $(".item").click(function() {
-    if ($(this).index() == 12) {
+  $(".item").on("click", function() {
+    if ($(this).index() === 12) {
       return
     }
     $(this).toggleClass("clicked");
+    $('#refreshButton').hide();
     playRandomClick();
   
     // Update the clicked tile's state in localStorage
     const clickedTiles = $(".item.clicked").map(function() {
       return $(this).index();
     }).get();
-    localStorage.setItem("clickedTiles", JSON.stringify(clickedTiles));
+    localStorage.setItem(TILES_KEY, JSON.stringify(clickedTiles));
+    localStorage.setItem(DATE_KEY, JSON.stringify(today));
+    //If people start leaving their browsers overnight we'll have to reset the board on date mismatch here...
 
     //check for winner! There is probably an algo for this...
-      const check = $("#board").children();
+    const check = $("#board").children();
 
-      function checkTiles(numbers) {
-          let count = 0;
-          // ... spreads the numbers from the array to be individual parameters
-          numbers.forEach(function (currentNumber) {
-              if ($(check[currentNumber]).hasClass("clicked")) {
-                  count++;
-              }
-          });
-          if (count === numbers.length) {
-            return true;
-          }
-          return false;
-      }
+    function checkTiles(numbers) {
+        let count = 0;
+        // ... spreads the numbers from the array to be individual parameters
+        numbers.forEach(function (currentNumber) {
+            if ($(check[currentNumber]).hasClass("clicked")) {
+                count++;
+            }
+        });
+        return count === numbers.length;
+    }
 
-      function checkAllTiles() {
-        if ($("#board").children(".clicked").length === check.length) {
-          return true;
-        }
-        return false;
-      }
+    function checkAllTiles() {
+      return $("#board").children(".clicked").length === check.length;
+    }
 
-      if (wonFullHouse) {
-      }
-      else if (checkAllTiles()) {
-        bigWinner();
-      }
+    if (wonFullHouse) {
+    }
+    else if (checkAllTiles()) {
+      bigWinner();
+    }
 
-      if (wonLine) {
-      }
-      //ROWS
-      else if (checkTiles([0, 1, 2, 3, 4])) {
-          winner();
-      } else if (checkTiles([5, 6, 7, 8, 9])) {
-          winner();
-      } else if (checkTiles([10, 11, 12, 13, 14])) {
-          winner();
-      } else if (checkTiles([15, 16, 17, 18, 19])) {
-          winner();
-      } else if (checkTiles([20, 21, 22, 23, 24])) {
-          winner();
-      }
-      //COLUMNS!
-      else if (checkTiles([0, 5, 10, 15, 20])) {
-          winner();
-      } else if (checkTiles([1, 6, 11, 16, 21])) {
-          winner();
-      } else if (checkTiles([2, 7, 12, 17, 22])) {
-          winner();
-      } else if (checkTiles([3, 8, 13, 18, 23])) {
-          winner();
-      } else if (checkTiles([4, 9, 14, 19, 24])) {
-          winner();
-      }
-      //CRISS CROSS
-      else if (checkTiles([0, 6, 12, 18, 24])) {
-          winner();
-      } else if (checkTiles([4, 8, 12, 16, 20])) {
-          winner();
-      } else {
-          //loser();
-      }
+    if (wonLine) {
+    }
+    //ROWS
+    else if (checkTiles([0, 1, 2, 3, 4])) {
+        winner();
+    } else if (checkTiles([5, 6, 7, 8, 9])) {
+        winner();
+    } else if (checkTiles([10, 11, 12, 13, 14])) {
+        winner();
+    } else if (checkTiles([15, 16, 17, 18, 19])) {
+        winner();
+    } else if (checkTiles([20, 21, 22, 23, 24])) {
+        winner();
+    }
+    //COLUMNS!
+    else if (checkTiles([0, 5, 10, 15, 20])) {
+        winner();
+    } else if (checkTiles([1, 6, 11, 16, 21])) {
+        winner();
+    } else if (checkTiles([2, 7, 12, 17, 22])) {
+        winner();
+    } else if (checkTiles([3, 8, 13, 18, 23])) {
+        winner();
+    } else if (checkTiles([4, 9, 14, 19, 24])) {
+        winner();
+    }
+    //CRISS CROSS
+    else if (checkTiles([0, 6, 12, 18, 24])) {
+        winner();
+    } else if (checkTiles([4, 8, 12, 16, 20])) {
+        winner();
+    } else {
+        //loser();
+    }
   });
 
   // function loser() {

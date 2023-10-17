@@ -146,13 +146,13 @@ nav {
   padding: 15px 10px;
   text-align: center;
   color: white;
-  font-size: 28pt;
+  font-size: 26pt;
   border-radius: 20px;
   box-shadow: 10px 10px 12px -15px black;
 }
 
 #game p {
-  line-height: 50px;
+  line-height: 40px;
   text-shadow: 1px 1px 1px #00000056;
 }
 

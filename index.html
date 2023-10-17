@@ -17,6 +17,7 @@
     <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
     <link id="original-stylesheet" rel="stylesheet" type="text/css" href="./resources/css/style-rev3.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js" integrity="sha256-yoMkDAXM8WjPN69OCjx6rZcuupUOGlNFNzCWJ/xTNz0=" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
     <script src ="./resources/js/script-rev4.js"></script>
@@ -83,16 +84,6 @@
         background-color: #ffffff00;
         color: #fff;
       }
-
-      /* Original Theme Styles */
-      .original-theme .sheet-link {
-        background-color: #c13d0500;
-      }
-
-      /* Bread Theme Styles */
-      .bread-theme .sheet-link {
-        background-color: #ff8c5a00;
-      }
     </style>
   </head>
   <body class="original-theme">
@@ -105,7 +96,7 @@
               <img src="resources/images/logo.png" width="25%" alt="CosyWithJodie Bingo!">
             </a>
           </div>
-          <button id="refreshButton" class="refreshButton">
+          <button id="refreshButton" class="refreshButton" title="Roll for a better card before starting!">
             <a class="sheet-link"><i class="fas fa-sync-alt refresh-icon"></i></a>
           </button>
         </div>
