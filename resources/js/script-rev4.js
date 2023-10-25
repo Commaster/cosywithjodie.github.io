@@ -27,7 +27,7 @@ $(function() {
     "Cami says 'MOIST', with feeling",
     "New follower",
     "Get raided",
-    "New sub",
+    "New sub, not gifted",
     "Jodie catches something new",
     "*Restoring stamina*",
     "Jodie swings the wrong tool",
@@ -45,7 +45,9 @@ $(function() {
     "Jodie says 'Feck uff'",
     "Jodie drowns",
     "Mods get bullied",
-    "Sammi says '___, HONESTLY'"
+    "Sammi says '___, HONESTLY'",
+    "Sammi says 'Oh dear'",
+    "Jodie expresses her love to BooBear"
   ];
 
   const clickSounds = [
