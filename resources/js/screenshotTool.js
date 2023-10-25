@@ -19,7 +19,7 @@ function capture() {
       });
   
       var link = document.createElement('a');
-      link.download = 'cosywithjodiebingo.png';
+      link.download = `cosywithjodiebingo-${luxon.DateTime.utc().toISODate()}.png`;
       link.href = canvas.toDataURL();
       link.click();
     });
