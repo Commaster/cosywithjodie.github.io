@@ -152,7 +152,7 @@ nav {
 }
 
 #game p {
-  line-height: 40px;
+  line-height: 110%;
   text-shadow: 1px 1px 1px #00000056;
 }
 
@@ -210,12 +210,22 @@ nav {
   float: left;
   color: black;
   padding: 10px;
+  position: relative;
 }
 
 .item p {
   display: table-cell;
   vertical-align: middle;
   text-align: center;
+}
+
+.timestamp {
+  text-align: center;
+  font-size: 7pt;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  background-color: black;
 }
 
 .title {

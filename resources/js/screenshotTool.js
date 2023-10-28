@@ -7,17 +7,25 @@ function capture() {
     elementsToHide.forEach(function(element) {
       element.style.display = 'none';
     });
-  
+
+    var elementsToReveal = elementToCapture.querySelectorAll('.timestamp');
+    elementsToReveal.forEach(function (element) {
+      element.style.display = '';
+    })
+
     // Use html2canvas to capture the modified element
     html2canvas(elementToCapture, {
-      windowWidth: elementToCapture.scrollWidth,
-      windowHeight: elementToCapture.scrollHeight
+      windowWidth: 2*elementToCapture.scrollWidth,
+      windowHeight: 2*elementToCapture.scrollHeight
     }).then(function(canvas) {
       // Show the hidden elements again
       elementsToHide.forEach(function(element) {
         element.style.display = '';
       });
-  
+      elementsToReveal.forEach(function (element) {
+        element.style.display = 'none';
+      })
+
       var link = document.createElement('a');
       link.download = `cosywithjodiebingo-${luxon.DateTime.utc().toISODate()}.png`;
       link.href = canvas.toDataURL();

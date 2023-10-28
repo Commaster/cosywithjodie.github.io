@@ -81,14 +81,14 @@ $(function() {
 
   // Retrieve cached bingo card or generate a new one
   let spaces = JSON.parse(localStorage.getItem(CARD_KEY));
-  let clickedTiles = []; // Define clickedTiles array
+  let clickedTiles = new Map(); // Define clickedTiles map
   if (!spaces) {
     spaces = generateRandomBingoCard();
     localStorage.setItem(CARD_KEY, JSON.stringify(spaces));
   } else {
     // Restore clicked tiles from localStorage
-    clickedTiles = JSON.parse(localStorage.getItem(TILES_KEY)) || [];
-    clickedTiles.forEach(index => {
+    clickedTiles = new Map(JSON.parse(localStorage.getItem(TILES_KEY)) || []);
+    clickedTiles.forEach((value, key, map) => {
     });
   }
 
@@ -96,13 +96,26 @@ $(function() {
   const board = $("#board");
   for (let i = 0; i < spaces.length; i++) {
     const boardTile = document.createElement('div');
-    boardTile.classList.add('item');
-    if (i === 12 || clickedTiles.includes(i)) {
-      boardTile.classList.add('clicked');
-    }
+
     const tileText = document.createElement('p');
     tileText.innerText = spaces[i];
     boardTile.appendChild(tileText);
+
+    boardTile.classList.add('item');
+    if (i === 12 || clickedTiles.has(i)) {
+      boardTile.classList.add('clicked');
+      var timestampSpan = document.createElement("span");
+      if (clickedTiles.has(i)) {
+        timestampSpan.innerText = clickedTiles.get(i);
+      }
+      else
+      {
+        timestampSpan.innerText = "";
+      }
+      timestampSpan.classList.add('timestamp');
+      timestampSpan.style.display = 'none';
+      boardTile.appendChild(timestampSpan);
+    }
     board.append(boardTile);
   }
 
@@ -136,7 +149,7 @@ $(function() {
   // Refresh button functionality
   $("#refreshButton").on("click", function() {
     localStorage.removeItem(TILES_KEY);
-    clickedTiles = []; // Clear clickedTiles array
+    clickedTiles = new Map(); // Clear clickedTiles map
     wonLine = false;
     wonFullHouse = false;
     spaces = generateRandomBingoCard();
@@ -159,15 +172,32 @@ $(function() {
     if ($(this).index() === 12) {
       return
     }
-    $(this).toggleClass("clicked");
-    $('#refreshButton').hide();
+
+    if ($(this).hasClass("clicked")) {
+      $(this).removeClass("clicked");
+      $(this).children(".timestamp").remove();
+    }
+    else {
+      $(this).addClass("clicked");
+      $('#refreshButton').hide();
+
+      var timestampSpan = document.createElement("span");
+      timestampSpan.innerText = luxon.DateTime.utc().toISO();
+      timestampSpan.classList.add('timestamp');
+      timestampSpan.style.display = 'none';
+      $(this).append(timestampSpan);
+    }
     playRandomClick();
-  
+
     // Update the clicked tile's state in localStorage
-    const clickedTiles = $(".item.clicked").map(function() {
-      return $(this).index();
-    }).get();
-    localStorage.setItem(TILES_KEY, JSON.stringify(clickedTiles));
+    const clickedTiles = new Map($(".item.clicked")
+      .map(function(tile) {
+        return {key: $(this).index(), value: $(this).find("span")[0].innerText};
+      })
+      .get().filter(entry => entry.key !== 12)
+      .map(entry => {return [entry.key, entry.value];}));
+    console.log(clickedTiles);
+    localStorage.setItem(TILES_KEY, JSON.stringify(Array.from(clickedTiles.entries())));
     localStorage.setItem(DATE_KEY, JSON.stringify(today));
     //If people start leaving their browsers overnight we'll have to reset the board on date mismatch here...
 
@@ -175,14 +205,14 @@ $(function() {
     const check = $("#board").children();
 
     function checkTiles(numbers) {
-        let count = 0;
-        // ... spreads the numbers from the array to be individual parameters
-        numbers.forEach(function (currentNumber) {
-            if ($(check[currentNumber]).hasClass("clicked")) {
-                count++;
-            }
-        });
-        return count === numbers.length;
+      let count = 0;
+      // ... spreads the numbers from the array to be individual parameters
+      numbers.forEach(function (currentNumber) {
+        if ($(check[currentNumber]).hasClass("clicked")) {
+          count++;
+        }
+      });
+      return count === numbers.length;
     }
 
     function checkAllTiles() {
