@@ -169,6 +169,7 @@ $(function() {
   });
 
   $(".item").on("click", function() {
+    playRandomClick();
     if ($(this).index() === 12) {
       return
     }
@@ -187,7 +188,6 @@ $(function() {
       timestampSpan.style.display = 'none';
       $(this).append(timestampSpan);
     }
-    playRandomClick();
 
     // Update the clicked tile's state in localStorage
     const clickedTiles = new Map($(".item.clicked")
